@@ -22,10 +22,10 @@ Execute the following command in the terminal to install Newman -> npm install -
 1. Run collection from Postman -> From the app main menu select "Import". Pick up the task solution file and once imported open the runner menu then select run in order to execute the test suite.
 
 2. Run collection from Newman -> newman run "collection file.json" </br>
-Note: In the project there are no enviroment or global variables, so this should be enough.
+NOTE: In the project there are no enviroment or global variables, so this should be enough.
 
-3. Reslolve PowerShell Script Not Digitally Signed -> Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-Note: Error: "ps1 is not digitally signed. The script will not execute on the system", could happen when a user tries to run the collection.
+3. Reslolve PowerShell Script Not Digitally Signed -> Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass </br>
+NOTE: Error: "ps1 is not digitally signed. The script will not execute on the system", could happen when a user tries to run the collection.
 
 
 
