@@ -1,0 +1,923 @@
+{
+	"info": {
+		"_postman_id": "09ecb52d-9069-4624-8b45-b05db7ff4fc1",
+		"name": "doodle",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5432610"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Create User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Parse response data \r",
+									"var Data = pm.response.json();\r",
+									"\r",
+									"// Set user id\r",
+									"pm.collectionVariables.set(\"userID\", Data.id);\r",
+									"\r",
+									"// Successful user creation code should be 201\r",
+									"pm.test(\"Verify successful user creation\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});\r",
+									"\r",
+									"// Mandatory response properties\r",
+									"pm.test(\"Verify Body parameters\", function()\r",
+									"{\r",
+									"    pm.expect(Data).have.property(\"id\");\r",
+									"    pm.expect(Data).have.property(\"name\");\r",
+									"})\r",
+									"\r",
+									"// Name is created properly\r",
+									"pm.test(\"Verify user name is correct\", function()\r",
+									"{\r",
+									"    pm.expect(Data.name).to.eql(pm.collectionVariables.get(\"name\"));     \r",
+									"})\r",
+									"\r",
+									"// Schema\r",
+									"const schema = {\r",
+									"    \r",
+									"  \"type\": \"object\",\r",
+									"  \"properties\": {\r",
+									"    \"id\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"name\": {\r",
+									"      \"type\": \"string\"\r",
+									"    }\r",
+									"  },\r",
+									"  \"required\": [\r",
+									"    \"id\",\r",
+									"    \"name\"\r",
+									"  ]\r",
+									"};\r",
+									"\r",
+									"\r",
+									"// Verify schema\r",
+									"pm.test('Verify create user schema', function () {\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"//set collection variable\r",
+									"const userName = pm.collectionVariables.replaceIn('{{$randomUserName}}');\r",
+									"pm.collectionVariables.set(\"name\", userName);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"name\": \"{{name}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Set total size\r",
+									"pm.collectionVariables.set(\"totalSize\",pm.response.json().totalSize) ;\r",
+									"\r",
+									"// Verify get is working\r",
+									"pm.test(\"Verify get users\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Shema\r",
+									"const schema = {\r",
+									"  \"type\": \"object\",\r",
+									"  \"properties\": {\r",
+									"    \"items\": {\r",
+									"      \"type\": \"array\",\r",
+									"      \"items\": [\r",
+									"        {\r",
+									"          \"type\": \"object\",\r",
+									"          \"properties\": {\r",
+									"            \"id\": {\r",
+									"              \"type\": \"string\"\r",
+									"            },\r",
+									"            \"name\": {\r",
+									"              \"type\": \"string\"\r",
+									"            }\r",
+									"          },\r",
+									"          \"required\": [\r",
+									"            \"id\",\r",
+									"            \"name\"\r",
+									"          ]\r",
+									"        }\r",
+									"      ]\r",
+									"    },\r",
+									"    \"page\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"    \"pageSize\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"    \"totalSize\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    }\r",
+									"  },\r",
+									"  \"required\": [\r",
+									"    \"items\",\r",
+									"    \"page\",\r",
+									"    \"pageSize\",\r",
+									"    \"totalSize\"\r",
+									"  ]\r",
+									"}\r",
+									"\r",
+									"// verify shema\r",
+									"pm.test('Verify get user schema', function () {\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Users by Page",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"page_value\", _.random(1, 5));\r",
+									"pm.collectionVariables.set(\"page_size\", _.random(1, 20));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Response parse\r",
+									"const userResponse =pm.response.json();\r",
+									"const count = userResponse.totalSize;\r",
+									"\r",
+									"// Status code\r",
+									"pm.test(\"Verify get user by page\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Verify correct page\r",
+									"pm.test(\"Verify correct page value\", function () {\r",
+									"    pm.expect(userResponse.page).to.eql(pm.collectionVariables.get(\"page_value\"));\r",
+									"});\r",
+									"\r",
+									"// Verify correct page size\r",
+									"pm.test(\"Verify correct page size\", function () {\r",
+									"    pm.expect(userResponse.pageSize).to.eql(pm.collectionVariables.get(\"page_size\"));\r",
+									"});\r",
+									"\r",
+									"// Verify total size\r",
+									"pm.test(\"Verify total size\", function () {\r",
+									"    pm.expect(userResponse.totalSize).to.eql(pm.collectionVariables.get(\"totalSize\"));\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users?page={{page_value}}&page_size={{page_size}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "{{page_value}}"
+								},
+								{
+									"key": "page_size",
+									"value": "{{page_size}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User{ID}",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"console.log(pm.collectionVariables.get(\"id\"));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Status code 200\r",
+									"pm.test(\"Verify get user by ID\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// User name is correct\r",
+									"pm.test(\"Verify user name\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(pm.collectionVariables.get(\"name\"));\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/{{userID}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{userID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Slots",
+			"item": [
+				{
+					"name": "Create Slot",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"startAt\", new Date((new Date()).getTime()));\r",
+									"// current time {{$isoTimestamp}}\r",
+									"const endTime = new Date((new Date()).getTime() + (1 * 86400000));\r",
+									"pm.collectionVariables.set(\"endAt\", endTime);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Verify slot creation\r",
+									"pm.test(\"Verify successful slot creation\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});\r",
+									"\r",
+									"// Set slot id value\r",
+									"const slotData = pm.response.json();\r",
+									"pm.collectionVariables.set(\"slotID\", slotData.id);\r",
+									"\r",
+									"\r",
+									"// Schema\r",
+									"const schema ={\r",
+									"    \r",
+									"  \"properties\": {\r",
+									"    \"id\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"startAt\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"endAt\": {\r",
+									"      \"type\": \"string\"\r",
+									"    }\r",
+									"  },\r",
+									"  \"required\": [\r",
+									"    \"id\",\r",
+									"    \"startAt\",\r",
+									"    \"endAt\"\r",
+									"    ]\r",
+									"};\r",
+									"\r",
+									"// Verify schema\r",
+									"pm.test(\"Verify create new slot schema\", function () {\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
+									"\r",
+									"  "
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"startAt\": \"{{startAt}}\",\r\n  \"endAt\": \"{{endAt}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/slots",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"slots"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Slots",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Verify get slots\r",
+									"pm.test(\"Verify get slots\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Schema\r",
+									"const schema = {\r",
+									"    \"properties\": {\r",
+									"    \"items\": {\r",
+									"      \"type\": \"array\",\r",
+									"      \"items\": [\r",
+									"        {\r",
+									"          \"type\": \"object\",\r",
+									"          \"properties\": {\r",
+									"            \"id\": {\r",
+									"              \"type\": \"string\"\r",
+									"            },\r",
+									"            \"startAt\": {\r",
+									"              \"type\": \"string\"\r",
+									"            },\r",
+									"            \"endAt\": {\r",
+									"              \"type\": \"string\"\r",
+									"            }\r",
+									"          },\r",
+									"          \"required\": [\r",
+									"            \"id\",\r",
+									"            \"startAt\",\r",
+									"            \"endAt\"\r",
+									"          ]\r",
+									"        }\r",
+									"      ]\r",
+									"    },\r",
+									"    \"page\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"    \"pageSize\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"    \"totalSize\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    }\r",
+									"  },\r",
+									"  \"required\": [\r",
+									"    \"items\",\r",
+									"    \"page\",\r",
+									"    \"pageSize\",\r",
+									"    \"totalSize\"\r",
+									"  ]\r",
+									"}\r",
+									"// Verify schema\r",
+									"pm.test(\"Verify get slots schema\", function () {\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/slots?page=11&page_size=100",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"slots"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "11"
+								},
+								{
+									"key": "page_size",
+									"value": "100"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Slot{ID}",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Verify get slot by id\r",
+									"pm.test(\"Verify get slot by ID\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Schema\r",
+									"const schema = {\r",
+									"    \"properties\": {\r",
+									"    \"id\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"startAt\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"endAt\": {\r",
+									"      \"type\": \"string\"\r",
+									"    }\r",
+									"  },\r",
+									"  \"required\": [\r",
+									"    \"id\",\r",
+									"    \"startAt\",\r",
+									"    \"endAt\"\r",
+									"  ]\r",
+									"}\r",
+									"\r",
+									"// Verify get slod by ID schema\r",
+									"pm.test(\"Verify get slod by ID schema\", function () {\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/slots/{{slotID}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"slots",
+								"{{slotID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Meetings",
+			"item": [
+				{
+					"name": "Create Meeting",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Verify meeting creation\r",
+									"pm.test(\"Verify successful meeting creation\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});\r",
+									"\r",
+									"// Meeting data\r",
+									"const meetingData = pm.response.json();\r",
+									"\r",
+									"// Set meetingID\r",
+									"pm.collectionVariables.set(\"meetingID\", meetingData.id);\r",
+									"\r",
+									"// Schema\r",
+									"const schema = \r",
+									"{\r",
+									"   \"properties\": {\r",
+									"    \"id\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"title\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"startAt\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"endAt\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"participants\": {\r",
+									"      \"type\": \"array\",\r",
+									"      \"items\": [\r",
+									"        {\r",
+									"          \"type\": \"object\",\r",
+									"          \"properties\": {\r",
+									"            \"id\": {\r",
+									"              \"type\": \"string\"\r",
+									"            },\r",
+									"            \"name\": {\r",
+									"              \"type\": \"string\"\r",
+									"            }\r",
+									"          },\r",
+									"          \"required\": [\r",
+									"            \"id\",\r",
+									"            \"name\"\r",
+									"          ]\r",
+									"        }\r",
+									"      ]\r",
+									"    }\r",
+									"  },\r",
+									"  \"required\": [\r",
+									"    \"id\",\r",
+									"    \"title\",\r",
+									"    \"startAt\",\r",
+									"    \"endAt\",\r",
+									"    \"participants\"\r",
+									"  ]\r",
+									"}\r",
+									"\r",
+									"// Verify create meeting schema\r",
+									"pm.test(\"Verify create meeting schema\", function () {\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"slotId\": \"{{slotID}}\",\r\n  \"title\": \"{{$randomBitcoin}}\",\r\n  \"participants\": [\r\n    {\r\n      \"id\": \"{{userID}}\"\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/meetings",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"meetings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Meeting",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Verify get meetings\r",
+									"pm.test(\"Verify get meeting without pagination\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"//schema\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/meetings",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"meetings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Meeting{ID}",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Verify get meeting by ID\r",
+									"pm.test(\"Verify get meeting by ID\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/meetings/{{meetingID}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"meetings",
+								"{{meetingID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Delete test Data",
+			"item": [
+				{
+					"name": "Delete Meeting",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Verify meeting deletion', function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/meetings/{{meetingID}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"meetings",
+								"{{meetingID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Slot",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Verify slot delete\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/slots/{{slotID}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"slots",
+								"{{slotID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Verify user delete\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/{{userID}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{userID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080"
+		},
+		{
+			"key": "name",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "page_value",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "page_size",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "startAt",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "endAt",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "slotID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "meetingID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "totalSize",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
