@@ -71,7 +71,7 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"//set collection variable\r",
+									"//set collection variable for user name\r",
 									"const userName = pm.collectionVariables.replaceIn('{{$randomUserName}}');\r",
 									"pm.collectionVariables.set(\"name\", userName);\r",
 									"\r",
@@ -695,6 +695,82 @@
 									"});\r",
 									"\r",
 									"//schema\r",
+									"const schema =\r",
+									"{\r",
+									"  \r",
+									"  \"type\": \"object\",\r",
+									"  \"properties\": {\r",
+									"    \"items\": {\r",
+									"      \"type\": \"array\",\r",
+									"      \"items\": [\r",
+									"        {\r",
+									"          \"type\": \"object\",\r",
+									"          \"properties\": {\r",
+									"            \"id\": {\r",
+									"              \"type\": \"string\"\r",
+									"            },\r",
+									"            \"title\": {\r",
+									"              \"type\": \"string\"\r",
+									"            },\r",
+									"            \"startAt\": {\r",
+									"              \"type\": \"string\"\r",
+									"            },\r",
+									"            \"endAt\": {\r",
+									"              \"type\": \"string\"\r",
+									"            },\r",
+									"            \"participants\": {\r",
+									"              \"type\": \"array\",\r",
+									"              \"items\": [\r",
+									"                {\r",
+									"                  \"type\": \"object\",\r",
+									"                  \"properties\": {\r",
+									"                    \"id\": {\r",
+									"                      \"type\": \"string\"\r",
+									"                    },\r",
+									"                    \"name\": {\r",
+									"                      \"type\": \"string\"\r",
+									"                    }\r",
+									"                  },\r",
+									"                  \"required\": [\r",
+									"                    \"id\",\r",
+									"                    \"name\"\r",
+									"                  ]\r",
+									"                }\r",
+									"              ]\r",
+									"            }\r",
+									"          },\r",
+									"          \"required\": [\r",
+									"            \"id\",\r",
+									"            \"title\",\r",
+									"            \"startAt\",\r",
+									"            \"endAt\",\r",
+									"            \"participants\"\r",
+									"          ]\r",
+									"        }\r",
+									"      ]\r",
+									"    },\r",
+									"    \"page\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"    \"pageSize\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"    \"totalSize\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    }\r",
+									"  },\r",
+									"  \"required\": [\r",
+									"    \"items\",\r",
+									"    \"page\",\r",
+									"    \"pageSize\",\r",
+									"    \"totalSize\"\r",
+									"  ]\r",
+									"}\r",
+									"\r",
+									"// schema validation\r",
+									"pm.test(\"Verify get meeting schema\", function () {\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
 									""
 								],
 								"type": "text/javascript"
@@ -726,6 +802,58 @@
 									"// Verify get meeting by ID\r",
 									"pm.test(\"Verify get meeting by ID\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Schema\r",
+									"const schema =\r",
+									"{\r",
+									"    \"type\": \"object\",\r",
+									"  \"properties\": {\r",
+									"    \"id\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"title\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"startAt\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"endAt\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"participants\": {\r",
+									"      \"type\": \"array\",\r",
+									"      \"items\": [\r",
+									"        {\r",
+									"          \"type\": \"object\",\r",
+									"          \"properties\": {\r",
+									"            \"id\": {\r",
+									"              \"type\": \"string\"\r",
+									"            },\r",
+									"            \"name\": {\r",
+									"              \"type\": \"string\"\r",
+									"            }\r",
+									"          },\r",
+									"          \"required\": [\r",
+									"            \"id\",\r",
+									"            \"name\"\r",
+									"          ]\r",
+									"        }\r",
+									"      ]\r",
+									"    }\r",
+									"  },\r",
+									"  \"required\": [\r",
+									"    \"id\",\r",
+									"    \"title\",\r",
+									"    \"startAt\",\r",
+									"    \"endAt\",\r",
+									"    \"participants\"\r",
+									"  ]\r",
+									"}\r",
+									"\r",
+									"// Verify meeting by id schema\r",
+									"pm.test(\"Verify get meeting by ID schema\", function () {\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -743,6 +871,115 @@
 							"path": [
 								"meetings",
 								"{{meetingID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Calendar",
+			"item": [
+				{
+					"name": "Calendar Data",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"year\", _.random(2017, 2022));\r",
+									"\r",
+									"function generateMonth(){\r",
+									"    var randomMonth = _.random(1, 12);\r",
+									"    if(parseInt(pm.collectionVariables.get(\"year\")) == 2022)\r",
+									"    {\r",
+									"        let randomMonth = _.random(1, new Date().getMonth());\r",
+									"    }\r",
+									"    \r",
+									"    if (parseInt(randomMonth) < 10)\r",
+									"    {\r",
+									"    return randomMonth = '0' + randomMonth;\r",
+									"    }\r",
+									"    return randomMonth;\r",
+									"}\r",
+									"\r",
+									"pm.collectionVariables.set(\"month\", generateMonth());\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// for random yead and date between 2017 and today\r",
+									"pm.test(\"Verify get calendar data\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Schema\r",
+									"const schema =\r",
+									"{\r",
+									"  \r",
+									"  \"type\": \"object\",\r",
+									"  \"properties\": {\r",
+									"    \"days\": {\r",
+									"      \"type\": \"object\"\r",
+									"    },\r",
+									"    \"slotsBefore\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"    \"slotsAfter\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"    \"meetingsBefore\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"    \"meetingsAfter\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    }\r",
+									"  },\r",
+									"  \"required\": [\r",
+									"    \"days\",\r",
+									"    \"slotsBefore\",\r",
+									"    \"slotsAfter\",\r",
+									"    \"meetingsBefore\",\r",
+									"    \"meetingsAfter\"\r",
+									"  ]\r",
+									"}\r",
+									"\r",
+									"// Verify get calssendar schema\r",
+									"pm.test(\"Verify get calendar data\", function () {\r",
+									"    pm.response.to.have.jsonSchema(schema)\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/calendars?month={{year}}-{{month}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"calendars"
+							],
+							"query": [
+								{
+									"key": "month",
+									"value": "{{year}}-{{month}}"
+								}
 							]
 						}
 					},
@@ -916,6 +1153,16 @@
 		},
 		{
 			"key": "totalSize",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "year",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "month",
 			"value": "",
 			"type": "string"
 		}
