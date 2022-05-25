@@ -43,4 +43,4 @@ See: ***[Findings.docx](https://github.com/DNedkov/QA-backend-challenge/blob/mai
 
 ## Test Results
 <a name="Test-Results"/>
-See: doodle_test_results.html
+See: ***[doodle_test_results.html](https://github.com/DNedkov/QA-backend-challenge/blob/main/doodle_test_results.html)***
