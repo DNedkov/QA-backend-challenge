@@ -38,8 +38,9 @@ NOTE: Error: "ps1 is not digitally signed. The script will not execute on the sy
 
 ## Findings
 <a name="Findings"/>
-See the Findings file
+
+See: ***[Findings.docx](https://github.com/DNedkov/QA-backend-challenge/blob/main/Findings.docx)***
 
 ## Test Results
 <a name="Test-Results"/>
-See the doodle_test_results.html
+See: doodle_test_results.html
