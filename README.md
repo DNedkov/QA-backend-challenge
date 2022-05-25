@@ -39,7 +39,7 @@ NOTE: Error: "ps1 is not digitally signed. The script will not execute on the sy
 ## Findings
 <a name="Findings"/>
 
-See: ***[Findings.docx](https://github.com/DNedkov/QA-backend-challenge/blob/main/Findings.docx)***
+See: ***[Findings.pdf]([https://github.com/DNedkov/QA-backend-challenge/blob/main/Findings.docx](https://github.com/DNedkov/QA-backend-challenge/blob/main/Findings.pdf)*** or ***[Findings.docx](https://github.com/DNedkov/QA-backend-challenge/blob/main/Findings.docx)***
 
 ## Test Results
 <a name="Test-Results"/>
