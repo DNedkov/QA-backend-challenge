@@ -28,7 +28,7 @@ Execute the following command in the terminal to install Newman -> npm install -
 
 1. Run collection from Postman -> From the app main menu select "Import". Pick up the task solution file and once imported open the runner menu then select run in order to execute the test suite.
 
-2. Run collection from Newman -> newman run "collection file.json" </br>
+2. Run postman scripts from Newman CLI -> In the file folder start CLI and execute $ newman run "collection file.json" </br>
 NOTE: In the project there are no enviroment or global variables, so this should be enough.
 
 3. Reslolve PowerShell Script Not Digitally Signed -> Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass </br>
